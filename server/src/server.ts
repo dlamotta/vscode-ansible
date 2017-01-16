@@ -97,7 +97,7 @@ function handler(result: ExecResult): void {
 			sev = DiagnosticSeverity.Warning;
 			msg = line.substring(WARNING.length);
 		}
-		else if (line.startsWith("ERROR!")) {
+		else if (line.startsWith(ERROR)) {
 			sev = DiagnosticSeverity.Error;
 			msg = line.substring(ERROR.length);
 		}
