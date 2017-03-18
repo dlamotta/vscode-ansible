@@ -1,17 +1,17 @@
 // Allows for executing a program with command-line arguments and reading the result
-interface IExec {
+export interface IExec {
     exec: (filename: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) => void;
 }
 
 declare var require;
 
-class ExecResult {
+export class ExecResult {
     public stdout = "";
     public stderr = "";
     public exitCode: number;
 }
 
-class NodeExec implements IExec {
+export class NodeExec implements IExec {
     public exec(filename: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) : void {
         var nodeExec = require('child_process').exec;
 

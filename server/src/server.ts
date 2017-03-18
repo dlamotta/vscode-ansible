@@ -13,6 +13,7 @@ import {
 	InitializeParams, InitializeResult, TextDocumentPositionParams,
 	CompletionItem, CompletionItemKind
 } from 'vscode-languageserver';
+import {NodeExec, IExec, ExecResult} from './exec';
 
 const WARNING = "[WARNING] ";
 const ERROR = "ERROR! "
@@ -82,7 +83,7 @@ connection.onDidChangeConfiguration((change) => {
 
 function handler(result: ExecResult): void {
 	let problems = 0;
-	let lines = result.stdout.split(/\r?\n/g);
+	let lines = result.stderr.split(/\r?\n/g);
 	let sev: DiagnosticSeverity;	
 
 	// clean up whatever we had before
@@ -121,10 +122,14 @@ function handler(result: ExecResult): void {
 }
 
 function validateTextDocument(playbook: TextDocument): void {
-	let playbookUri = playbook.uri;
+	let playbookUri :string = playbook.uri;
+	if(!playbook.uri.startsWith("file:")){//only file system URIs are supported.
+		return;
+	}
+
 	// we want to do the syntax check on the host where we are editing playbooks (i.e., localhost)
-	let args: string[] = [ "-i", "\"localhost,\"", "-c", "local", "--syntax-check", playbookUri.toString() ];
-	connection.console.log(playbookUri.toString());
+	let args: string[] = [ "-i", "\"localhost,\"", "-c", "local", "--syntax-check", playbookUri.slice(7) ];
+	connection.console.log(playbookUri.slice(7));
 	cli.exec("ansible-playbook", args, handler);
 
 	// Send the computed diagnostics to VSCode.
